@@ -19,6 +19,8 @@ params.num_reads    = 500                   // reads per sample
 
 process GENERATE_READS {
     tag "${sample_id}"
+    memory '256 MB'
+    cpus 1
 
     input:
     val(sample_id)
@@ -44,6 +46,8 @@ with open('${sample_id}.fastq', 'w') as f:
 
 process ALIGN {
     tag "${sample_id}"
+    memory '512 MB'
+    cpus 2
 
     input:
     tuple val(sample_id), path(reads)
@@ -63,6 +67,8 @@ process ALIGN {
 
 process SORT_BAM {
     tag "${sample_id}"
+    memory '512 MB'
+    cpus 2
 
     input:
     tuple val(sample_id), path(bam)
@@ -79,6 +85,9 @@ process SORT_BAM {
 }
 
 process QC_REPORT {
+    memory '256 MB'
+    cpus 1
+
     input:
     val(all_samples)
     path(bams)
