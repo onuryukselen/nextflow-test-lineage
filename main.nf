@@ -31,7 +31,7 @@ process GENERATE_READS {
     script:
     """
     python3 -c "
-import random
+import random, time
 random.seed(hash('${sample_id}'))
 bases = 'ACGT'
 qual  = 'I' * ${params.read_length}
@@ -39,6 +39,7 @@ with open('${sample_id}.fastq', 'w') as f:
     for i in range(${params.num_reads}):
         seq = ''.join(random.choices(bases, k=${params.read_length}))
         f.write(f'@${sample_id}_read_{i}\\n{seq}\\n+\\n{qual}\\n')
+time.sleep(3)
 "
     echo "Generated ${params.num_reads} reads for ${sample_id}"
     """
@@ -62,6 +63,7 @@ process ALIGN {
     echo "ALIGNED sample=${sample_id} reads=\${read_count} ref=hg38" > ${sample_id}.bam
     cat ${reads} >> ${sample_id}.bam
     echo "Aligned \${read_count} reads for ${sample_id}"
+    sleep 3
     """
 }
 
@@ -81,6 +83,7 @@ process SORT_BAM {
     # Simulate sort: reverse the file as a stand-in
     sort ${bam} > ${sample_id}.sorted.bam
     echo "Sorted BAM for ${sample_id}: \$(wc -l < ${sample_id}.sorted.bam) lines"
+    sleep 3
     """
 }
 
